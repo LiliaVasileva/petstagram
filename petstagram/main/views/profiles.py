@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from petstagram.main.forms import CreateProfileForm, EditProfileForm
+from petstagram.main.forms import CreateProfileForm, EditProfileForm, DeleteProfileForm
 from petstagram.main.helpers import get_profile
 from petstagram.main.models import Pet, PetPhoto, Profile
 
@@ -18,6 +18,7 @@ def show_profile(request):
         'profile': profile,
         'total_likes_count': total_likes_count,
         'total_pet_photos_count': total_pet_photos_count,
+        'pets': pets,
     }
     return render(request, 'profile_details.html', context)
 
@@ -57,10 +58,6 @@ def show_profile(request):
 #     return render(request, 'profile_edit.html', context)
 
 
-def delete_profile(request):
-    return render(request, 'profile_delete.html')
-
-
 # the two view actions of create and edit are almost the same, this function
 # helps to better codding, organizing and reusing the same code:
 def profile_action(request, form_class, success_url, instance, template_name):
@@ -84,3 +81,8 @@ def create_profile(request):
 
 def edit_profile(request):
     return profile_action(request, EditProfileForm, 'profile', get_profile(), 'profile_edit.html')
+
+
+
+def delete_profile(request):
+    return profile_action(request, DeleteProfileForm, 'index', get_profile(), 'profile_delete.html')

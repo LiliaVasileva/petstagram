@@ -3,7 +3,7 @@ import datetime
 from django.core.validators import MinLengthValidator, URLValidator
 from django.db import models
 
-from petstagram.main.validators import validate_only_letters, validate_file_max_size_in_mb
+from petstagram.main.validators import validate_only_letters, validate_file_max_size_in_mb, MinDateValidator
 
 
 class Profile(models.Model):
@@ -86,6 +86,7 @@ class Pet(models.Model):
     FISH = 'Fish'
     OTHER = 'Other'
     TYPES = [(x, x) for x in (CAT, DOG, FISH, PARROT, BUNNY, OTHER)]
+    MIN_DATE = datetime.date(1920, 1, 1)
 
     # Fields/Columns
     name = models.CharField(
@@ -98,6 +99,10 @@ class Pet(models.Model):
     date_of_birth = models.DateField(
         null=True,
         blank=True,
+        validators=(
+            MinDateValidator(MIN_DATE),
+        )
+
     )
     # One to one relations
 
