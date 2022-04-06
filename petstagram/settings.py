@@ -39,6 +39,7 @@ THIRD_PARTY_APPS = ()
 
 PETSTAGRAM_APPS = (
     'petstagram.main',
+    'petstagram.accounts',
 )
 
 INSTALLED_APPS = THIRD_PARTY_APPS + PETSTAGRAM_APPS + DJANGO_APPS
