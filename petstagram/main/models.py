@@ -68,6 +68,7 @@ class Profile(models.Model):
         blank=True,
 
     )
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -77,7 +78,7 @@ class Profile(models.Model):
 # if value == Profile.MALE  => good solution
 
 class Pet(models.Model):
-    #Constants
+    # Constants
     NAME_MAX_LENGTH = 30
     CAT = 'Cat'
     DOG = 'Dog'
@@ -87,7 +88,7 @@ class Pet(models.Model):
     OTHER = 'Other'
     TYPES = [(x, x) for x in (CAT, DOG, FISH, PARROT, BUNNY, OTHER)]
 
-    #Fields/Columns
+    # Fields/Columns
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
     )
@@ -106,11 +107,12 @@ class Pet(models.Model):
         Profile,
         on_delete=models.CASCADE,
     )
+
     # Many to many relations
 
     # Other proparties , methods,  dunder methods
 
-    #изчисляване на  възрастта на Pet-a
+    # изчисляване на  възрастта на Pet-a
     @property
     def age(self):
         return datetime.datetime.now().year - self.date_of_birth.year

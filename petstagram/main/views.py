@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from petstagram.main.models import Profile, PetPhoto
+from petstagram.main.models import Profile, PetPhoto, Pet
 
 
 def get_profile():
@@ -20,11 +20,12 @@ def show_home(request):
 
 def show_dashboard(request):
     profile = get_profile()
-    pet_photos = set(
-        PetPhoto.objects \
-            .prefetch_related('tagged_pets') \
-            .filter(tagged_pets__user_profile=profile),
-    )
+    if not profile:
+        return redirect('401')
+    pet_photos = PetPhoto.objects \
+        .prefetch_related('tagged_pets') \
+        .filter(tagged_pets__user_profile=profile) \
+        .distinct()
     context = {
         'pet_photos': pet_photos,
     }
@@ -32,7 +33,20 @@ def show_dashboard(request):
 
 
 def show_profile(request):
-    return render(request, 'profile_details.html')
+    profile = get_profile()
+    pets = Pet.objects.filter(user_profile= profile)
+    pet_photos = PetPhoto.objects.filter(tagged_pets__in=pets).distinct()
+    #.filter(tagged_pets__user_profile = profile)
+    # with distinct we get only da unique data
+    total_likes_count = sum(pp.likes for pp in pet_photos)
+    total_pet_photos_count = len(pet_photos)
+
+    context = {
+        'profile': profile,
+        'total_likes_count': total_likes_count,
+        'total_pet_photos_count': total_pet_photos_count,
+    }
+    return render(request, 'profile_details.html', context)
 
 
 def show_pet_photo_details(request, pk):
