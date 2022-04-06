@@ -66,7 +66,6 @@ class Profile(models.Model):
         choices=GENDERS,
         null=True,
         blank=True,
-
     )
 
     def __str__(self):
