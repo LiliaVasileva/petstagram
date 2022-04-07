@@ -3,7 +3,7 @@
     <div class="d-flex">
         <div class="d-inline p-2 w-50">
             <!-- Image -->
-            <img src="{{ pet_photo.photo }}"
+            <img src="{{ pet_photo.photo.url }}"
                  class="w-100 rounded mx-auto d-block" alt="Photo description">
         </div>
         <div class="d-inline p-2 w-50">
@@ -19,13 +19,16 @@
             {% endfor %}
             <!-- Description -->
             <p class="mt-2">Description: {{ pet_photo.description }}</p>
-            <!-- Likes Button -->
-            <a href="{% url 'like pet photo' pet_photo.id %}"><i class="fa fa-heart-o" aria-hidden="true"></i></a>
-            <!-- Likes Counter -->
+            {% if not is_owner %}
+                <a href="{% url 'like pet photo' pet_photo.id %}"><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+            {% endif %}
             <p class="mt-2">Likes: {{ pet_photo.likes }}</p>
-            <!-- Buttons -->
-            <a href="#" class="btn btn-primary">Edit</a>
-            <a href="#" class="btn btn-danger">Delete</a>
+            {% if is_owner %}
+                <a href="#" class="btn btn-primary">Edit</a>
+                <a href="#" class="btn btn-danger">Delete</a>
+            {% else %}
+
+            {% endif %}
         </div>
     </div>
 {% endblock %}

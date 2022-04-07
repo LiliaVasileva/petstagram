@@ -1,26 +1,54 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.views.generic import DetailView
 
 from petstagram.main.forms import CreateProfileForm, EditProfileForm, DeleteProfileForm
 from petstagram.main.helpers import get_profile
 from petstagram.main.models import Pet, PetPhoto, Profile
 
 
-def show_profile(request):
-    profile = get_profile()
-    pets = Pet.objects.filter(user_profile=profile)
-    pet_photos = PetPhoto.objects.filter(tagged_pets__in=pets).distinct()
-    # .filter(tagged_pets__user_profile = profile)
-    # with distinct we get only da unique data
-    total_likes_count = sum(pp.likes for pp in pet_photos)
-    total_pet_photos_count = len(pet_photos)
+# CBV of show profile details
+class ProfileDetailsViews(DetailView):
+    model = Profile
+    template_name = 'profile_details.html'
+    context_object_name = 'profile'
 
-    context = {
-        'profile': profile,
-        'total_likes_count': total_likes_count,
-        'total_pet_photos_count': total_pet_photos_count,
-        'pets': pets,
-    }
-    return render(request, 'profile_details.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # self object is a Profile, so i we
+        pets = list(Pet.objects.filter(user_id=self.object.user_id))
+        pet_photos = PetPhoto.objects.filter(tagged_pets__in=pets).distinct()
+        total_likes_count = sum(pp.likes for pp in pet_photos)
+        total_pet_photos_count = len(pet_photos)
+
+        context.update({
+                'total_likes_count': total_likes_count,
+                'total_pet_photos_count': total_pet_photos_count,
+                'pets': pets,
+                'is_owner': self.object.user_id == self.request.user.id,
+            })
+
+        return  context
+
+
+#
+# FBV of show profile details:
+# def show_profile(request):
+#     profile = get_profile()
+#     pets = Pet.objects.filter(user_profile=profile)
+#     pet_photos = PetPhoto.objects.filter(tagged_pets__in=pets).distinct()
+#     # .filter(tagged_pets__user_profile = profile)
+#     # with distinct we get only da unique data
+#     total_likes_count = sum(pp.likes for pp in pet_photos)
+#     total_pet_photos_count = len(pet_photos)
+#
+#     context = {
+#         'profile': profile,
+#         'total_likes_count': total_likes_count,
+#         'total_pet_photos_count': total_pet_photos_count,
+#         'pets': pets,
+#     }
+#     return render(request, 'profile_details.html', context)
 
 
 # check down the page will see function which can be reused, not writing the same code

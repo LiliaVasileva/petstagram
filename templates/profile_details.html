@@ -28,8 +28,10 @@
                 </div>
                 <p class="mt-2">Total Images: {{ total_pet_photos_count }}</p>
                 <p class="mt-2">Total Likes: {{ total_likes_count }}</p>
-                <a href="{% url 'profile edit' %}" class="btn btn-primary">Edit</a>
-                <a href="{% url 'profile delete' %}" class="btn btn-danger">Delete</a>
+                {% if is_owner %}
+                    <a href="{% url 'profile edit' %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'profile delete' %}" class="btn btn-danger">Delete</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -44,8 +46,10 @@
             {% if pet.date_of_birth %}
                 <p class="mt-2">Age: {{ pet.age }}</p>
             {% endif %}
-            <a href="{% url 'pet edit' pet.pk %}" class="btn btn-primary">Edit</a>
-            <a href="{% url 'pet delete'  pet.pk %}" class="btn btn-danger">Delete</a>
+            {% if is_owner %}
+                <a href="{% url 'pet edit' pet.pk %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'pet delete'  pet.pk %}" class="btn btn-danger">Delete</a>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}

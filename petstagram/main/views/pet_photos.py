@@ -1,17 +1,56 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, CreateView
 
 from petstagram.main.models import PetPhoto
 from petstagram.main.helpers import get_profile
 
 
-def show_pet_photo_details(request, pk):
-    pet_photo = PetPhoto.objects \
-        .prefetch_related('tagged_pets') \
-        .get(pk=pk)
-    context = {
-        'pet_photo': pet_photo
-    }
-    return render(request, 'photo_details.html', context)
+# CBV of show pet_photo details
+
+class PetPhotoDetails(LoginRequiredMixin,DetailView):
+    model = PetPhoto
+    template_name = 'photo_details.html'
+    context_object_name = 'pet_photo'
+
+    # we override the get_queryset ,so we can add and prefetched_related('tagged_pets')
+    # as used in the FBV bellow
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset.prefetch_related('tagged_pets')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_owner'] = self.object.user == self.request.user
+        return context
+
+
+class CreatePetPhotoView(LoginRequiredMixin,CreateView):
+    model = PetPhoto
+    template_name = 'photo_create.html'
+    fields = ('photo', 'description', 'tagged_pets')
+    success_url = reverse_lazy('dashboard')
+
+    # this way we connect Pet Photo with User who created it
+    def form_valid(self,form):
+        # user of the instance of the form should be our user in order for the form to be valid
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+
+# # FBV of pet photo details:
+# def show_pet_photo_details(request, pk):
+#     pet_photo = PetPhoto.objects \
+#         .prefetch_related('tagged_pets') \
+#         .get(pk=pk)
+#     context = {
+#         'pet_photo': pet_photo
+#     }
+#     return render(request, 'photo_details.html', context)
+
 
 # managing likes:
 def like_pet_photo(request, pk):

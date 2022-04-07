@@ -10,7 +10,7 @@ class PetInlineAdmin(admin.StackedInline):
 # по този начин регистрираме моделите в администрацията
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    inlines = (PetInlineAdmin,) # трябва да го добавим в тюпъл тук
+    # inlines = (PetInlineAdmin,) # трябва да го добавим в тюпъл тук
     list_display = ('first_name',  'last_name')
 
 

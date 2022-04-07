@@ -1,9 +1,15 @@
 import datetime
 
+from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, URLValidator
 from django.db import models
 
 from petstagram.main.validators import validate_only_letters, validate_file_max_size_in_mb, MinDateValidator
+
+# the only place where user by name should be used is in settings.py and in models.py where we create it
+# otherwise we should use django build in function get_user_model() in order to abstraction of the code
+
+UserModel = get_user_model()
 
 
 class Profile(models.Model):
@@ -67,6 +73,11 @@ class Profile(models.Model):
         null=True,
         blank=True,
     )
+    user = models.OneToOneField(
+        UserModel,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -107,8 +118,8 @@ class Pet(models.Model):
     # One to one relations
 
     # One to many relations
-    user_profile = models.ForeignKey(
-        Profile,
+    user = models.ForeignKey(
+        UserModel,
         on_delete=models.CASCADE,
     )
 
@@ -123,7 +134,7 @@ class Pet(models.Model):
 
     # Meta uniques info данни за самата таблица,
     class Meta:
-        unique_together = ('user_profile', 'name')
+        unique_together = ('user', 'name')
         # прави тези двете да са уникална двойка
 
 
@@ -148,4 +159,9 @@ class PetPhoto(models.Model):
     )
     likes = models.IntegerField(
         default=0,
+    )
+
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
     )
