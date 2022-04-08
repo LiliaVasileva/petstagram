@@ -3,8 +3,6 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from petstagram.main.forms import CreatePetForm, EditPetForm, DeletePetForm
-from petstagram.main.helpers import get_profile
-from petstagram.main.models import Pet
 
 
 # Class Base Views:
@@ -13,7 +11,8 @@ class CreatePetView(CreateView):
     form_class = CreatePetForm
     template_name = 'pet_create.html'
     success_url = reverse_lazy('dashboard')
-# this way we define the pet to be created for the currant user
+
+    # this way we define the pet to be created for the currant user
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

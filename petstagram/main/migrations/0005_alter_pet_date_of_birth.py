@@ -2,7 +2,7 @@
 
 import datetime
 from django.db import migrations, models
-import petstagram.main.validators
+import petstagram.common.validators
 
 
 class Migration(migrations.Migration):
@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pet',
             name='date_of_birth',
-            field=models.DateField(blank=True, null=True, validators=[petstagram.main.validators.MinDateValidator(datetime.date(1920, 1, 1))]),
+            field=models.DateField(blank=True, null=True, validators=[
+                petstagram.common.validators.MinDateValidator(datetime.date(1920, 1, 1))]),
         ),
     ]

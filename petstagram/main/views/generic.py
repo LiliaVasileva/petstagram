@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView
 
 from petstagram.common.view_mixins import RedirectToDashboard
 from petstagram.main.models import PetPhoto
-from petstagram.main.helpers import get_profile
+
 
 
 class HomeView(RedirectToDashboard,TemplateView):
@@ -14,6 +14,7 @@ class HomeView(RedirectToDashboard,TemplateView):
         context = super().get_context_data(**kwargs)
         context['hide_additional_nav_items'] = True
         return context
+
 # This is handel now by inheriting custom created mixin RedirectToDashboard
     # # if the user is logged in should be redirect to dashbord
     # # dispatch handle the role of accessing the view

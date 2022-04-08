@@ -1,15 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, DeleteView, UpdateView
 
 from petstagram.main.models import PetPhoto
-from petstagram.main.helpers import get_profile
 
 
 # CBV of show pet_photo details
 
-class PetPhotoDetails(LoginRequiredMixin,DetailView):
+class PetPhotoDetails(LoginRequiredMixin, DetailView):
     model = PetPhoto
     template_name = 'photo_details.html'
     context_object_name = 'pet_photo'
@@ -27,18 +26,30 @@ class PetPhotoDetails(LoginRequiredMixin,DetailView):
         return context
 
 
-class CreatePetPhotoView(LoginRequiredMixin,CreateView):
+class CreatePetPhotoView(LoginRequiredMixin, CreateView):
     model = PetPhoto
     template_name = 'photo_create.html'
     fields = ('photo', 'description', 'tagged_pets')
     success_url = reverse_lazy('dashboard')
 
     # this way we connect Pet Photo with User who created it
-    def form_valid(self,form):
+    def form_valid(self, form):
         # user of the instance of the form should be our user in order for the form to be valid
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
+class EditPetPhotoView(UpdateView):
+    model = PetPhoto
+    template_name = 'photo_edit.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse_lazy('pet photo details', kwargs={'pk': self.object.id})
+
+
+class DeletePetPhotoView(DeleteView):
+    pass
 
 
 # # FBV of pet photo details:
